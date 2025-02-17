@@ -3,8 +3,7 @@
 import { useInView } from "framer-motion";
 import React, { useRef } from "react";
 import { Button } from "../ui/button";
-import { SiGithub, SiInstagram, SiLinkedin, SiTwitter } from "react-icons/si";
-import { Linkedin } from "lucide-react";
+import { SiGithub, SiInstagram, SiLinkedin, SiFacebook } from "react-icons/si"; // Added SiFacebook
 import { config } from "@/data/config";
 import Link from "next/link";
 
@@ -20,9 +19,9 @@ const BUTTONS = [
     icon: <SiLinkedin size={"24"} color={"#fff"} />,
   },
   {
-    name: "Twitter",
-    href: config.social.twitter,
-    icon: <SiTwitter size={"24"} color={"#fff"} />,
+    name: "Facebook", // Updated name
+    href: config.social.facebook, // Assuming you have a Facebook URL in your config
+    icon: <SiFacebook size={"24"} color={"#fff"} />, // Using the Facebook icon now
   },
   {
     name: "Instagram",
