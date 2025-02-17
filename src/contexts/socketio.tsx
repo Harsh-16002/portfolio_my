@@ -8,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import { io, Socket } from "socket.io-client";
-import { generateRandomCursor } from "../lib/generate-random-cursor"
+import { generateRandomCursor } from "../lib/generate-random-cursor";
 
 export type User = {
   socketId: string;
@@ -21,6 +21,7 @@ export type User = {
   location: string;
   flag: string;
 };
+
 export type Message = {
   socketId: string;
   content: string;
@@ -53,25 +54,38 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
 
   // SETUP SOCKET.IO
   useEffect(() => {
-    const username =  localStorage.getItem("username") || generateRandomCursor().name
+    if (!process.env.NEXT_PUBLIC_WS_URL) {
+      console.warn("WebSocket URL is not set. Skipping socket connection.");
+      return;
+    }
+
+    const username = localStorage.getItem("username") || generateRandomCursor().name;
     const socket = io(process.env.NEXT_PUBLIC_WS_URL!, {
       query: { username },
     });
+
     setSocket(socket);
-    socket.on("connect", () => {});
+
+    socket.on("connect", () => {
+      console.log("Connected to WebSocket");
+    });
+
     socket.on("msgs-receive-init", (msgs) => {
       setMsgs(msgs);
     });
-    socket.on("msg-receive", (msgs) => {
-      setMsgs((p) => [...p, msgs]);
+
+    socket.on("msg-receive", (msg) => {
+      setMsgs((prev) => [...prev, msg]);
     });
+
     return () => {
       socket.disconnect();
+      console.log("Disconnected from WebSocket");
     };
   }, []);
 
   return (
-    <SocketContext.Provider value={{ socket: socket, users, setUsers, msgs }}>
+    <SocketContext.Provider value={{ socket, users, setUsers, msgs }}>
       {children}
     </SocketContext.Provider>
   );
