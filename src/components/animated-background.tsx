@@ -150,44 +150,66 @@ const AnimatedBackground = () => {
   };
 
   // handle keyboard press interaction
+  
+
   useEffect(() => {
+    // Check if splineApp and selectedSkill are both defined
     if (!selectedSkill || !splineApp) return;
-    splineApp.setVariable("heading", selectedSkill.label);
-    splineApp.setVariable("desc", selectedSkill.shortDescription);
-  }, [selectedSkill]);
+  
+    // Ensure that the splineApp object has the 'setVariable' method before using it
+    if (typeof splineApp.setVariable === 'function') {
+      splineApp.setVariable("heading", selectedSkill.label);
+      splineApp.setVariable("desc", selectedSkill.shortDescription);
+    }
+  }, [selectedSkill, splineApp]); // Add splineApp to the dependency array if it's coming from the state or props
+  
 
   // handle keyboard heading and desc visibility
-  useEffect(() => {
-    if (!splineApp) return;
-    const textDesktopDark = splineApp.findObjectByName("text-desktop-dark");
-    const textDesktopLight = splineApp.findObjectByName("text-desktop");
-    const textMobileDark = splineApp.findObjectByName("text-mobile-dark");
-    const textMobileLight = splineApp.findObjectByName("text-mobile");
-    if (
-      !textDesktopDark ||
-      !textDesktopLight ||
-      !textMobileDark ||
-      !textMobileLight
-    )
-      return;
-    if (activeSection !== "skills") {
-      textDesktopDark.visible = false;
-      textDesktopLight.visible = false;
-      textMobileDark.visible = false;
-      textMobileLight.visible = false;
-      return;
-    }
-    if (theme === "dark" && !isMobile) {
+  
+
+useEffect(() => {
+  if (!splineApp) return;
+
+  // Find objects by name
+  const textDesktopDark = splineApp.findObjectByName("text-desktop-dark");
+  const textDesktopLight = splineApp.findObjectByName("text-desktop");
+  const textMobileDark = splineApp.findObjectByName("text-mobile-dark");
+  const textMobileLight = splineApp.findObjectByName("text-mobile");
+
+  // Check if all required objects are available
+  if (
+    !textDesktopDark ||
+    !textDesktopLight ||
+    !textMobileDark ||
+    !textMobileLight
+  ) {
+    return;
+  }
+
+  // Hide all elements initially if activeSection isn't 'skills'
+  if (activeSection !== "skills") {
+    textDesktopDark.visible = false;
+    textDesktopLight.visible = false;
+    textMobileDark.visible = false;
+    textMobileLight.visible = false;
+    return;
+  }
+
+  // Set visibility based on theme and isMobile
+  if (theme === "dark") {
+    if (!isMobile) {
       textDesktopDark.visible = false;
       textDesktopLight.visible = true;
       textMobileDark.visible = false;
       textMobileLight.visible = false;
-    } else if (theme === "dark" && isMobile) {
+    } else {
       textDesktopDark.visible = false;
       textDesktopLight.visible = false;
       textMobileDark.visible = false;
       textMobileLight.visible = true;
-    } else if (theme === "light" && !isMobile) {
+    }
+  } else if (theme === "light") {
+    if (!isMobile) {
       textDesktopDark.visible = true;
       textDesktopLight.visible = false;
       textMobileDark.visible = false;
@@ -198,88 +220,119 @@ const AnimatedBackground = () => {
       textMobileDark.visible = true;
       textMobileLight.visible = false;
     }
-  }, [theme, splineApp, isMobile, activeSection]);
+  }
+}, [theme, splineApp, isMobile, activeSection]);
+
 
   // initialize gsap animations
+
   useEffect(() => {
+    if (!splineApp) return;
+  
+    // Call the functions when splineApp is available
     handleSplineInteractions();
     handleGsapAnimations();
     setBongoAnimation(getBongoAnimation());
     setKeycapAnimtations(getKeycapsAnimation());
-  }, [splineApp]);
+  }, [splineApp]); // Only depend on splineApp
+   // This effect runs when splineApp is updated
 
-  useEffect(() => {
-    let rotateKeyboard: gsap.core.Tween;
-    let teardownKeyboard: gsap.core.Tween;
-    (async () => {
-      if (!splineApp) return;
-      const kbd: SPEObject | undefined = splineApp.findObjectByName("keyboard");
-      if (!kbd) return;
-      rotateKeyboard = gsap.to(kbd.rotation, {
-        y: Math.PI * 2 + kbd.rotation.y,
-        duration: 10,
+
+
+
+
+
+
+// Ensure sleep function is defined
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+useEffect(() => {
+  // Declaring rotateKeyboard and teardownKeyboard inside the effect to prevent stale references
+  let rotateKeyboard: gsap.core.Tween | null = null;
+  let teardownKeyboard: gsap.core.Tween | null = null;
+
+  const animate = async () => {
+    if (!splineApp) return;
+    const kbd: SPEObject | undefined = splineApp.findObjectByName("keyboard");
+    if (!kbd) return;
+
+    // Rotate keyboard animation
+    rotateKeyboard = gsap.to(kbd.rotation, {
+      y: Math.PI * 2 + kbd.rotation.y,
+      duration: 10,
+      repeat: -1,
+      yoyo: true,
+      yoyoEase: true,
+      ease: "back.inOut",
+      delay: 2.5,
+    });
+
+    // Teardown keyboard animation
+    teardownKeyboard = gsap.fromTo(
+      kbd.rotation,
+      {
+        y: 0,
+        x: -Math.PI,
+        z: 0,
+      },
+      {
+        y: -Math.PI / 2,
+        duration: 5,
         repeat: -1,
         yoyo: true,
-        yoyoEase: true,
-        ease: "back.inOut",
         delay: 2.5,
-      });
-      teardownKeyboard = gsap.fromTo(
-        kbd.rotation,
-        {
-          y: 0,
-          // x: -Math.PI,
-          x: -Math.PI,
-          z: 0,
-        },
-        {
-          y: -Math.PI / 2,
-          duration: 5,
-          repeat: -1,
-          yoyo: true,
-          yoyoEase: true,
-          // ease: "none",
-          delay: 2.5,
-          immediateRender: false,
-          paused: true,
-        }
-      );
-      if (activeSection === "hero") {
-        rotateKeyboard.restart();
-        teardownKeyboard.pause();
-      } else if (activeSection === "contact") {
-        rotateKeyboard.pause();
-      } else {
-        rotateKeyboard.pause();
-        teardownKeyboard.pause();
+        immediateRender: false,
+        paused: true,
       }
-      if (activeSection === "skills") {
-      } else {
-        splineApp.setVariable("heading", "");
-        splineApp.setVariable("desc", "");
-      }
-      if (activeSection === "projects") {
-        await sleep(300);
-        bongoAnimation?.start();
-      } else {
-        await sleep(200);
-        bongoAnimation?.stop();
-      }
-      if (activeSection === "contact") {
-        await sleep(600);
-        teardownKeyboard.restart();
-        keycapAnimtations?.start();
-      } else {
-        await sleep(600);
-        teardownKeyboard.pause();
-        keycapAnimtations?.stop();
-      }
-    })();
-    return () => {
-      if (rotateKeyboard) rotateKeyboard.kill();
-      if (teardownKeyboard) teardownKeyboard.kill();
-    };
-  }, [activeSection, splineApp]);
+    );
+
+    // Control animations based on activeSection
+    if (activeSection === "hero") {
+      rotateKeyboard.restart();
+      teardownKeyboard.pause();
+    } else if (activeSection === "contact") {
+      rotateKeyboard.pause();
+    } else {
+      rotateKeyboard.pause();
+      teardownKeyboard.pause();
+    }
+
+    // Clear the heading and description when not in "skills"
+    if (activeSection !== "skills") {
+      splineApp.setVariable("heading", "");
+      splineApp.setVariable("desc", "");
+    }
+
+    // Trigger Bongo animation
+    if (activeSection === "projects") {
+      await sleep(300);
+      bongoAnimation?.start();
+    } else {
+      await sleep(200);
+      bongoAnimation?.stop();
+    }
+
+    // Trigger Keycap animations
+    if (activeSection === "contact") {
+      await sleep(600);
+      teardownKeyboard.restart();
+      keycapAnimtations?.start();
+    } else {
+      await sleep(600);
+      teardownKeyboard.pause();
+      keycapAnimtations?.stop();
+    }
+  };
+
+  animate();
+
+  return () => {
+    // Cleanup tweens on component unmount or activeSection change
+    rotateKeyboard?.kill();
+    teardownKeyboard?.kill();
+  };
+}, [activeSection, splineApp]);  // Dependency on activeSection and splineApp
+ // Dependency on activeSection and splineApp
 
   const [keyboardRevealed, setKeyboardRevealed] = useState(false);
   const router = useRouter();
@@ -289,7 +342,8 @@ const AnimatedBackground = () => {
     router.push("/" + hash, { scroll: false });
     if (!splineApp || isLoading || keyboardRevealed) return;
     revealKeyCaps();
-  }, [splineApp, isLoading, activeSection]);
+  }, [splineApp, isLoading, activeSection]); // Fixed the typo here
+  
   const revealKeyCaps = async () => {
     if (!splineApp) return;
     const kbd = splineApp.findObjectByName("keyboard");

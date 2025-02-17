@@ -34,6 +34,7 @@ import {
  
 } from "react-icons/si";
 import { VscCode } from "react-icons/vsc";
+import Image from 'next/image';
 
 
 // @ts-ignore
@@ -244,13 +245,18 @@ function Page() {
             }}
           >
             <div className="flex flex-row lg:flex-col items-center">
-              <div className="flex justify-center items-center lg:w-full lg:aspect-square bg-zinc-800 rounded-xl lg:mb-5">
-                <img
-                  className="rounded-full p-4 lg:p-10 w-[100px] md:w-[150px] lg:w-[200px] aspect-square  bg-zinc-800"
-                  alt="me"
-                  src="/assets/me.jpg"
-                />
-              </div>
+           
+
+<div className="flex justify-center items-center lg:w-full lg:aspect-square bg-zinc-800 rounded-xl lg:mb-5">
+  <Image
+    className="rounded-full p-4 lg:p-10 w-[100px] md:w-[150px] lg:w-[200px] aspect-square bg-zinc-800"
+    alt="me"
+    src="/assets/me.jpg"
+    width={200}  // specify the width of the image
+    height={200} // specify the height of the image
+  />
+</div>
+
               <div className="flex flex-col gap-3 lg:items-center ml-10 md:ml-20 lg:ml-0">
                 <p className="text-center text-xl">Harsh Kumar Verma</p>
                 <div className="text-xs bg-zinc-700 w-fit px-3 py-1 rounded-full">

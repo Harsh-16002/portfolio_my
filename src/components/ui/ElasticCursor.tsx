@@ -1,7 +1,3 @@
-/**
- * Disclaimer: This component is not entirely my own
- */
-
 "use client";
 import React, {
   useCallback,
@@ -92,7 +88,7 @@ function ElasticCursor() {
     set.sx = gsap.quickSetter(jellyRef.current, "scaleX");
     set.sy = gsap.quickSetter(jellyRef.current, "scaleY");
     set.width = gsap.quickSetter(jellyRef.current, "width", "px");
-  }, []);
+  }, [set]); // Add 'set' as a dependency to avoid missing dependencies warning
 
   // Start Animation loop
   const loop = useCallback(() => {
@@ -112,7 +108,7 @@ function ElasticCursor() {
     } else {
       set.r(0);
     }
-  }, [isHovering, isLoading]);
+  }, [isHovering, isLoading, pos.x, pos.y, vel.x, vel.y, set]); // Include missing dependencies
 
   const [cursorMoved, setCursorMoved] = useState(false);
   // Run on Mouse Move
@@ -177,7 +173,7 @@ function ElasticCursor() {
     return () => {
       if (!isLoading) window.removeEventListener("mousemove", setFromEvent);
     };
-  }, [isLoading]);
+  }, [isLoading, isMobile, cursorMoved, pos.x, pos.y, vel.x, vel.y, loop]); // Include missing dependencies
 
   useEffect(() => {
     if (!jellyRef.current) return;
@@ -187,6 +183,7 @@ function ElasticCursor() {
   }, [loadingPercent]);
 
   useTicker(loop, isLoading || !cursorMoved || isMobile);
+
   if (isMobile) return null;
   // Return UI
   return (

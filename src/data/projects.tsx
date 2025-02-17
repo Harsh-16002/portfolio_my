@@ -242,7 +242,12 @@ const PROJECT_SKILLS = {
     title: "OpenAI",
     bg: "black",
     fg: "white",
-    icon: <img src="assets/icons/openai-svgrepo-com_white.svg" alt="OpenAI"/>,
+    icon: <Image 
+    src="/assets/icons/openai-svgrepo-com_white.svg" 
+    alt="OpenAI" 
+    width={24} // Adjust the width as needed
+    height={24} // Adjust the height as needed
+  />,
   },
   netlify: {
     title: "Netlify",
@@ -278,7 +283,12 @@ const PROJECT_SKILLS = {
     title: "Java",
     bg: "black",
     fg: "white",
-    icon: <img src="assets/icons/icons8-java.svg" alt="Java"/>,
+    icon: <Image 
+    src="/assets/icons/icons8-java.svg" 
+    alt="Java" 
+    width={50}  // Adjust the width as per your requirement
+    height={50} // Adjust the height as per your requirement
+  />,
   },
   cplusplus: {
     title: "C++",

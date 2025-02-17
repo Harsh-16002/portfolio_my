@@ -1,145 +1,129 @@
-"use client";
-import Image from "next/image";
-import React from "react";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalTrigger,
-} from "../ui/animated-modal";
-import { FloatingDock } from "../ui/floating-dock";
-import Link from "next/link";
-
-import SmoothScroll from "../smooth-scroll";
-import projects, { Project } from "@/data/projects";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import React from "react";
+import { Button } from "../ui/button";
+import { File } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { usePreloader } from "../preloader";
+import { BlurIn, BoxReveal } from "../reveal-animations";
+import ScrollDownIcon from "../scroll-down-icon";
+import { SiGithub, SiInstagram, SiLinkedin } from "react-icons/si";
+import { config } from "@/data/config";
 
-const ProjectsSection = () => {
+const HeroSection = () => {
+  const { isLoading } = usePreloader();
+
   return (
-    <section id="projects" className="max-w-7xl mx-auto md:h-[130vh]">
-      <Link href={"#projects"}>
-        <h2
+    <section id="hero" className={cn("relative w-full h-screen")}>
+      <div className="grid md:grid-cols-2">
+        <div
           className={cn(
-            "bg-clip-text text-4xl text-center text-transparent md:text-7xl pt-16",
-            "bg-gradient-to-b from-black/80 to-black/50",
-            "dark:bg-gradient-to-b dark:from-white/80 dark:to-white/20 dark:bg-opacity-50 mb-32"
+            "h-[calc(100dvh-3rem)] md:h-[calc(100dvh-4rem)] z-[2]",
+            "col-span-1",
+            "flex flex-col justify-start md:justify-center items-center md:items-start",
+            "pt-28 sm:pt-0 sm:pb-32 md:p-24 lg:p-40 xl:p-48"
           )}
         >
-          Projects
-        </h2>
-      </Link>
-      <div className="grid grid-cols-1 md:grid-cols-3">
-        {projects.map((project, index) => (
-          <Modall key={project.src} project={project} />
-        ))}
+          {!isLoading && (
+            <>
+              <div>
+                <BlurIn delay={0.7}>
+                  <p
+                    className={cn(
+                      "md:self-start mt-4 font-thin text-md text-slate-500 dark:text-zinc-400 ml-3",
+                      "cursor-default font-display sm:text-xl md:text-xl whitespace-nowrap"
+                    )}
+                  >
+                    <span className="font-bold text-blue-500">Hi, I am</span>
+                  </p>
+                </BlurIn>
+                <BlurIn delay={1}>
+                  <Tooltip delayDuration={300}>
+                    <TooltipTrigger asChild>
+                      <h1
+                        className={cn(
+                          "font-extrabold text-5xl text-slate-900 dark:text-white ml-1 text-left",
+                          "cursor-default font-display sm:text-6xl md:text-8xl"
+                        )}
+                      >
+                        Harsh Kumar  
+                        <br className="md:block hidden" />
+                        Verma
+                      </h1>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="dark:bg-white dark:text-black">
+                      There's something waiting for you in devtools
+                    </TooltipContent>
+                  </Tooltip>
+                </BlurIn>
+                <BlurIn delay={1.2}>
+                  <p
+                    className={cn(
+                      "md:self-start md:mt-4 font-thin text-md text-slate-500 dark:text-zinc-400 ml-3",
+                      "cursor-default font-display sm:text-xl md:text-xl"
+                    )}
+                  >
+                    Full Stack Developer | MERN | Python
+                  </p>
+                </BlurIn>
+              </div>
+              <div className="mt-8 md:ml-2 flex flex-col gap-3">
+                <Link
+                  href="https://drive.google.com/file/d/148f9QVefcTtsYd7JhlG4_2qtdVgED8kK/view?usp=drivesdk"
+                  target="_blank"
+                  className="flex-1"
+                >
+                  <BoxReveal delay={2} width="100%">
+                    <Button className="flex items-center gap-2 w-full">
+                      <File size={24} />
+                      <p>Resume</p>
+                    </Button>
+                  </BoxReveal>
+                </Link>
+                <div className="md:self-start flex gap-3">
+                  <Tooltip delayDuration={300}>
+                    <TooltipTrigger asChild>
+                      <Link href={"#contact"}>
+                        <Button variant={"outline"} className="block w-full">
+                          Hire Me
+                        </Button>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p>Let&apos;s Work Together! 🚀</p> {/* Fixed the error here */}
+                    </TooltipContent>
+                  </Tooltip>
+                  <Link href="" target="_blank">
+                    <Button variant={"outline"}>
+                      <SiGithub size={24} />
+                    </Button>
+                  </Link>
+                  <Link href="https://www.linkedin.com/in/harsh-verma-3561a1324?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank">
+                    <Button variant={"outline"}>
+                      <SiLinkedin size={24} />
+                    </Button>
+                  </Link>
+                  <Link href="https://www.instagram.com/harsh_kverma?igsh=aWRncnhjM3JlYzhr" target="_blank">
+                    <Button variant={"outline"}>
+                      <SiInstagram size={24} />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+        <div className="grid col-span-1"></div>
+      </div>
+      <div className="absolute bottom-10 left-[50%] translate-x-[-50%]">
+        <ScrollDownIcon />
       </div>
     </section>
   );
 };
-const Modall = ({ project }: { project: Project }) => {
-  return (
-    <div className="flex items-center justify-center">
-      <Modal>
-        <ModalTrigger className="bg-transparent flex justify-center group/modal-btn">
-          <div
-            className="relative w-[400px] h-auto rounded-lg overflow-hidden"
-            style={{ aspectRatio: "3/2" }}
-          >
-            <Image
-              className="absolute w-full h-full top-0 left-0 hover:scale-[1.05] transition-all"
-              src={project.src}
-              alt={project.title}
-              width={300}
-              height={300}
-            />
-            <div className="absolute w-full h-1/2 bottom-0 left-0 bg-gradient-to-t from-black via-black/85 to-transparent pointer-events-none">
-              <div className="flex flex-col h-full items-start justify-end p-6">
-                <div className="text-lg text-left">{project.title}</div>
-                <div className="text-xs bg-white text-black rounded-lg w-fit px-2">
-                  {project.category}
-                </div>
-              </div>
-            </div>
-          </div>
-        </ModalTrigger>
-        <ModalBody className="md:max-w-4xl md:max-h-[80%] overflow-auto">
-          <SmoothScroll isInsideModal={true}>
-            <ModalContent>
-              <ProjectContents project={project} />
-            </ModalContent>
-          </SmoothScroll>
-          <ModalFooter className="gap-4">
-            <button className="px-2 py-1 bg-gray-200 text-black dark:bg-black dark:border-black dark:text-white border border-gray-300 rounded-md text-sm w-28">
-              Cancel
-            </button>
-            <Link href={project.live} target="_blank">
-              <button className="bg-black text-white dark:bg-white dark:text-black text-sm px-2 py-1 rounded-md border border-black w-28">
-                Visit
-              </button>
-            </Link>
-          </ModalFooter>
-        </ModalBody>
-      </Modal>
-    </div>
-  );
-};
-export default ProjectsSection;
 
-const ProjectContents = ({ project }: { project: Project }) => {
-  return (
-    <>
-      <h4 className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-100 font-bold text-center mb-8">
-        {project.title}
-      </h4>
-      <div className="flex flex-col md:flex-row md:justify-evenly max-w-screen overflow-hidden md:overflow-visible">
-        <div className="flex flex-row md:flex-col-reverse justify-center items-center gap-2 text-3xl mb-8">
-          <p className="text-sm mt-1 text-neutral-600 dark:text-neutral-500">
-            Frontend
-          </p>
-          {project.skills.frontend?.length > 0 && (
-            <FloatingDock items={project.skills.frontend} />
-          )}
-        </div>
-        {project.skills.backend?.length > 0 && (
-          <div className="flex flex-row md:flex-col-reverse justify-center items-center gap-2 text-3xl mb-8">
-            <p className="text-sm mt-1 text-neutral-600 dark:text-neutral-500">
-              Backend
-            </p>
-            <FloatingDock items={project.skills.backend} />
-          </div>
-        )}
-      </div>
-      {/* <div className="flex justify-center items-center">
-        {project.screenshots.map((image, idx) => (
-          <motion.div
-            key={"images" + idx}
-            style={{
-              rotate: Math.random() * 20 - 10,
-            }}
-            whileHover={{
-              scale: 1.1,
-              rotate: 0,
-              zIndex: 100,
-            }}
-            whileTap={{
-              scale: 1.1,
-              rotate: 0,
-              zIndex: 100,
-            }}
-            className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 flex-shrink-0 overflow-hidden"
-          >
-            <Image
-              src={`${project.src.split("1.png")[0]}${image}`}
-              alt="screenshots"
-              width="500"
-              height="500"
-              className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover flex-shrink-0"
-            />
-          </motion.div>
-        ))}
-      </div> */}
-      {project.content}
-    </>
-  );
-};
+export default HeroSection;

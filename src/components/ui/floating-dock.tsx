@@ -1,11 +1,4 @@
-/**
- * Note: Use position fixed according to your needs
- * Desktop navbar is better positioned at the bottom
- * Mobile navbar is better positioned at bottom right.
- **/
-
 import { cn } from "@/lib/utils";
-// import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
 import {
   AnimatePresence,
   MotionValue,
@@ -15,9 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { opacity } from "../header/anim";
 
 export const FloatingDock = ({
   items,
@@ -101,6 +92,7 @@ const FloatingDockDesktop = ({
   const [showHint, setShowHint] = useState(true);
   const timer = useRef<NodeJS.Timeout>();
   const controls = useAnimation();
+
   useEffect(() => {
     if (showHint) {
       controls.start({
@@ -118,11 +110,15 @@ const FloatingDockDesktop = ({
     } else {
       controls.stop();
     }
+
+    const timerRef = timer.current; // Store the timer in a local variable
+
     return () => {
       controls.stop();
-      clearInterval(timer.current);
+      if (timerRef) clearInterval(timerRef); // Use the variable in cleanup
     };
-  }, [showHint]);
+  }, [showHint, controls]); // Add necessary dependencies
+
   return (
     <div className="relative h-fit flex items-center justify-center">
       <motion.div
@@ -132,10 +128,8 @@ const FloatingDockDesktop = ({
         }}
         onMouseLeave={() => mouseX.set(Infinity)}
         className={cn(
-          // "hidden md:flex",
           "flex gap-2 md:gap-4",
           "mx-auto h-16 items-end  rounded-2xl bg-gray-50 dark:bg-neutral-900 px-4 pb-3",
-          // "blur-sm brightness-50",
           className
         )}
       >
@@ -148,17 +142,9 @@ const FloatingDockDesktop = ({
           className="z-10 absolute t-0 w-full h-full pointer-events-none"
           onMouseEnter={() => setShowHint(false)}
         >
-          <div
-            className={cn(
-              "relative w-full h-full flex items-center justify-center"
-              // "backdrop-blur-md"
-            )}
-          >
+          <div className="relative w-full h-full flex items-center justify-center">
             <motion.div
-              className={cn(
-                "w-5 h-5 border-2 left-[50%] top-0 border-black dark:border-white rounded-full",
-                "translate-x-[-50px]"
-              )}
+              className="w-5 h-5 border-2 left-[50%] top-0 border-black dark:border-white rounded-full translate-x-[-50px]"
               initial={{ opacity: 0, x: -50 }}
               animate={controls}
             ></motion.div>
@@ -182,7 +168,6 @@ function IconContainer({
 
   let distance = useTransform(mouseX, (val) => {
     let bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-
     return val - bounds.x - bounds.width / 2;
   });
 
