@@ -1,9 +1,9 @@
 const config = {
   title: "Harsh Verma | Web Developer",
   description: {
-    long: "Explore the portfolio of Abhijit, a Computer Science Engineer with 1.5 year experience in Devlopment, DevOps & Database management with hands-on experience in deploying & automating workflows, & collaborating with foreign clients. Strong analytical skills, effective communication, and a team-oriented approach to driving process improvements and delivering results.",
+    long: "Explore the portfolio of Harsh, a Computer Science Engineer .",
     short:
-      "Discover the portfolio of Abhijit, a DevOps enthusiast solving real life problems in DevOps and Development.",
+      "Discover the portfolio of Harsh.",
   },
   keywords: [
     "Harsh",
